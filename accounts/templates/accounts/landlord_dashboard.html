@@ -1,0 +1,10 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+<h3>Landlord Dashboard</h3>
+<p>Welcome, {{ user.get_full_name|default:user.username }}.</p>
+<ul>
+  <li>Manage properties, rooms, and rates</li>
+  <li>Manage user accounts</li>
+  <li>View reports (occupancy, collections, balances)</li>
+</ul>
+{% endblock %}

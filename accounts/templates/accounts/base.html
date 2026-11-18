@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BoardEase</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand navbar-dark bg-primary px-3">
+  <a class="navbar-brand" href="{% url 'dashboard' %}">BoardEase</a>
+  <div class="navbar-nav me-auto">
+    {% if user.is_authenticated %}
+      {% if user.role.role_name == "Landlord" or user.is_superuser and not user.role %}
+        <a class="nav-link" href="{% url 'landlord_dashboard' %}">Dashboard</a>
+        <a class="nav-link" href="#">Properties</a>
+        <a class="nav-link" href="#">Rooms</a>
+        <a class="nav-link" href="#">Accounts</a>
+        <a class="nav-link" href="#">Reports</a>
+      {% elif user.role.role_name == "Caretaker" %}
+        <a class="nav-link" href="{% url 'caretaker_dashboard' %}">Dashboard</a>
+        <a class="nav-link" href="#">Tenants</a>
+        <a class="nav-link" href="#">Leases</a>
+        <a class="nav-link" href="#">Payments</a>
+        <a class="nav-link" href="#">Maintenance</a>
+      {% elif user.role.role_name == "Tenant" %}
+        <a class="nav-link" href="{% url 'tenant_dashboard' %}">Dashboard</a>
+        <a class="nav-link" href="#">My Lease</a>
+        <a class="nav-link" href="#">My Invoices</a>
+        <a class="nav-link" href="#">Request Repair</a>
+      {% endif %}
+    {% endif %}
+  </div>
+  <div class="navbar-nav">
+    {% if user.is_authenticated %}
+      <a class="nav-link" href="{% url 'profile' %}">{{ user.username }}</a>
+      <form method="post" action="{% url 'logout' %}" class="d-inline">
+        {% csrf_token %}
+        <button class="btn btn-outline-light btn-sm mt-1">Logout</button>
+      </form>
+    {% else %}
+      <a class="nav-link" href="{% url 'login' %}">Login</a>
+      <a class="nav-link" href="{% url 'register' %}">Register</a>
+    {% endif %}
+  </div>
+</nav>
+<div class="container mt-4">
+  {% for m in messages %}
+    <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>
