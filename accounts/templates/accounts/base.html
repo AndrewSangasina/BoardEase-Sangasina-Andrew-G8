@@ -2,52 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BoardEase</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    body { background:#f4f6fb; min-height:100vh; display:flex; flex-direction:column; }
+    main { flex:1; }
+    .dash-card { transition:transform .15s, box-shadow .15s; }
+    .dash-card:hover { transform:translateY(-3px); box-shadow:0 .5rem 1rem rgba(0,0,0,.12)!important; }
+    .avatar { width:120px; height:120px; border-radius:50%; object-fit:cover; }
+    .avatar-initial { width:120px; height:120px; border-radius:50%; background:#0d6efd; color:#fff;
+      display:flex; align-items:center; justify-content:center; font-size:3rem; font-weight:600; margin:0 auto; }
+  </style>
 </head>
-<body class="bg-light">
-<nav class="navbar navbar-expand navbar-dark bg-primary px-3">
-  <a class="navbar-brand" href="{% url 'dashboard' %}">BoardEase</a>
-  <div class="navbar-nav me-auto">
-    {% if user.is_authenticated %}
-      {% if user.role.role_name == "Landlord" or user.is_superuser and not user.role %}
-        <a class="nav-link" href="{% url 'landlord_dashboard' %}">Dashboard</a>
-        <a class="nav-link" href="#">Properties</a>
-        <a class="nav-link" href="#">Rooms</a>
-        <a class="nav-link" href="#">Accounts</a>
-        <a class="nav-link" href="#">Reports</a>
-      {% elif user.role.role_name == "Caretaker" %}
-        <a class="nav-link" href="{% url 'caretaker_dashboard' %}">Dashboard</a>
-        <a class="nav-link" href="#">Tenants</a>
-        <a class="nav-link" href="#">Leases</a>
-        <a class="nav-link" href="#">Payments</a>
-        <a class="nav-link" href="#">Maintenance</a>
-      {% elif user.role.role_name == "Tenant" %}
-        <a class="nav-link" href="{% url 'tenant_dashboard' %}">Dashboard</a>
-        <a class="nav-link" href="#">My Lease</a>
-        <a class="nav-link" href="#">My Invoices</a>
-        <a class="nav-link" href="#">Request Repair</a>
-      {% endif %}
-    {% endif %}
-  </div>
-  <div class="navbar-nav">
-    {% if user.is_authenticated %}
-      <a class="nav-link" href="{% url 'profile' %}">{{ user.username }}</a>
-      <form method="post" action="{% url 'logout' %}" class="d-inline">
-        {% csrf_token %}
-        <button class="btn btn-outline-light btn-sm mt-1">Logout</button>
-      </form>
-    {% else %}
-      <a class="nav-link" href="{% url 'login' %}">Login</a>
-      <a class="nav-link" href="{% url 'register' %}">Register</a>
-    {% endif %}
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}"><i class="bi bi-house-door-fill me-1"></i>BoardEase</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav me-auto">
+        {% if user.is_authenticated %}
+          {% if user.role.role_name == "Caretaker" %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'caretaker_dashboard' %}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Tenants</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Leases</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Payments</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Maintenance</a></li>
+          {% elif user.role.role_name == "Tenant" %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'tenant_dashboard' %}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">My Lease</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">My Invoices</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Request Repair</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'landlord_dashboard' %}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Properties</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Rooms</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Accounts</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
+          {% endif %}
+        {% endif %}
+      </ul>
+      <ul class="navbar-nav align-items-lg-center">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' %}"><i class="bi bi-person-circle me-1"></i>{{ user.username }}</a>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </div>
   </div>
 </nav>
-<div class="container mt-4">
+
+<main class="container py-4">
   {% for m in messages %}
-    <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+    <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
+      {{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
   {% endfor %}
   {% block content %}{% endblock %}
-</div>
+</main>
+
+<footer class="text-center text-muted small py-3">BoardEase &copy; 2026</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

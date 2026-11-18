@@ -1,10 +1,13 @@
 {% extends "accounts/base.html" %}
 {% block content %}
-<h3>Caretaker Dashboard</h3>
-<p>Welcome, {{ user.get_full_name|default:user.username }}.</p>
-<ul>
-  <li>Register tenants and create leases</li>
-  <li>Record payments and meter readings</li>
-  <li>Handle maintenance requests</li>
-</ul>
+<div class="mb-4">
+  <h3 class="mb-0">Tenant Dashboard</h3>
+  <p class="text-muted">Welcome, {{ user.get_full_name|default:user.username }}.</p>
+</div>
+<div class="row g-3">
+  {% include "accounts/_card.html" with icon="file-earmark-text" title="My Lease" text="View your lease details" %}
+  {% include "accounts/_card.html" with icon="receipt" title="My Invoices" text="Balances and due dates" %}
+  {% include "accounts/_card.html" with icon="clock-history" title="Payment History" text="Past payments" %}
+  {% include "accounts/_card.html" with icon="tools" title="Request Repair" text="Submit a maintenance request" %}
+</div>
 {% endblock %}

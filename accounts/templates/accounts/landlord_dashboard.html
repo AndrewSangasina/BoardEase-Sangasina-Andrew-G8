@@ -1,10 +1,13 @@
 {% extends "accounts/base.html" %}
 {% block content %}
-<h3>Landlord Dashboard</h3>
-<p>Welcome, {{ user.get_full_name|default:user.username }}.</p>
-<ul>
-  <li>Manage properties, rooms, and rates</li>
-  <li>Manage user accounts</li>
-  <li>View reports (occupancy, collections, balances)</li>
-</ul>
+<div class="mb-4">
+  <h3 class="mb-0">Landlord Dashboard</h3>
+  <p class="text-muted">Welcome, {{ user.get_full_name|default:user.username }}.</p>
+</div>
+<div class="row g-3">
+  {% include "accounts/_card.html" with icon="building" title="Properties" text="Manage properties and rooms" %}
+  {% include "accounts/_card.html" with icon="cash-coin" title="Room Rates" text="Set monthly rates" %}
+  {% include "accounts/_card.html" with icon="people" title="Accounts" text="Manage user accounts" %}
+  {% include "accounts/_card.html" with icon="bar-chart-line" title="Reports" text="Occupancy, collections, balances" %}
+</div>
 {% endblock %}
